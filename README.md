@@ -105,6 +105,7 @@ The entire development process is documented in the tutorial linked at the top o
 - 📖 [Full Tutorial](https://nicklaunches.com/blog/build-flashcards-app-github-speckit-vscode-codex-tutorial)
 - 🌐 [Nick Launches - Website](https://nicklaunches.com)
 - 🐦 [Follow on X/Twitter](https://x.com/nicklaunches)
+- ✈️ [Prompt Builder](https://promptbuilder.cc)
 
 ## License
 
