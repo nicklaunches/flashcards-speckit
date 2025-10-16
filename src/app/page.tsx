@@ -3,17 +3,13 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { DeckList } from "@/components/deck/deck-list";
-import { DeckForm } from "@/components/deck/deck-form";
-import { listDecks, createDeck, updateDeck, deleteDeck } from "@/app/actions/deck";
+import { listDecks, deleteDeck } from "@/app/actions/deck";
 import { useErrorHandler } from "@/lib/utils/errors";
-import type { DeckWithStats, CreateDeckInput, UpdateDeckInput } from "@/types";
+import type { DeckWithStats } from "@/types";
 
 export default function HomePage() {
   const [decks, setDecks] = useState<DeckWithStats[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [showCreateForm, setShowCreateForm] = useState(false);
-  const [editingDeck, setEditingDeck] = useState<DeckWithStats | null>(null);
-  const [formLoading, setFormLoading] = useState(false);
   const { handleError } = useErrorHandler();
   const router = useRouter();
 
@@ -37,47 +33,11 @@ export default function HomePage() {
     }
   };
 
-  const handleCreateDeck = async (data: CreateDeckInput) => {
-    try {
-      setFormLoading(true);
-      const result = await createDeck(data);
-      if (result.success && result.data) {
-        setDecks([result.data, ...decks]);
-        setShowCreateForm(false);
-      } else {
-        handleError(new Error(result.error || "Failed to create deck"));
-      }
-    } catch (error) {
-      handleError(error, "creating deck");
-    } finally {
-      setFormLoading(false);
-    }
-  };
-
-  const handleUpdateDeck = async (data: UpdateDeckInput) => {
-    try {
-      setFormLoading(true);
-      const result = await updateDeck(data);
-      if (result.success && result.data) {
-        setDecks(decks.map(deck => 
-          deck.id === result.data!.id ? result.data! : deck
-        ));
-        setEditingDeck(null);
-      } else {
-        handleError(new Error(result.error || "Failed to update deck"));
-      }
-    } catch (error) {
-      handleError(error, "updating deck");
-    } finally {
-      setFormLoading(false);
-    }
-  };
-
   const handleDeleteDeck = async (deck: DeckWithStats) => {
     const confirmed = window.confirm(
       `Are you sure you want to delete "${deck.name}"? This will also delete all ${deck.statistics.totalCards} cards in this deck. This action cannot be undone.`
     );
-    
+
     if (!confirmed) return;
 
     try {
@@ -101,46 +61,19 @@ export default function HomePage() {
     router.push(`/decks/${deck.id}/study` as any);
   };
 
+  const handleCreateNew = () => {
+    router.push("/decks/new" as any);
+  };
+
   const handleEditDeck = (deck: DeckWithStats) => {
-    setEditingDeck(deck);
-    setShowCreateForm(false);
+    router.push(`/decks/${deck.id}` as any);
   };
-
-  const handleCancelForm = () => {
-    setShowCreateForm(false);
-    setEditingDeck(null);
-  };
-
-  if (showCreateForm) {
-    return (
-      <div className="max-w-4xl mx-auto">
-        <DeckForm
-          onSubmit={handleCreateDeck}
-          onCancel={handleCancelForm}
-          isLoading={formLoading}
-        />
-      </div>
-    );
-  }
-
-  if (editingDeck) {
-    return (
-      <div className="max-w-4xl mx-auto">
-        <DeckForm
-          deck={editingDeck}
-          onSubmit={handleUpdateDeck}
-          onCancel={handleCancelForm}
-          isLoading={formLoading}
-        />
-      </div>
-    );
-  }
 
   return (
     <div className="max-w-6xl mx-auto">
       <DeckList
         decks={decks}
-        onCreateNew={() => setShowCreateForm(true)}
+        onCreateNew={handleCreateNew}
         onEditDeck={handleEditDeck}
         onDeleteDeck={handleDeleteDeck}
         onStudyDeck={handleStudyDeck}

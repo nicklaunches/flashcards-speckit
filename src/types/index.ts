@@ -70,6 +70,10 @@ export interface UpdateCardInput {
   id: number;
   front?: string;
   back?: string;
+  easinessFactor?: number;
+  intervalDays?: number;
+  nextReviewDate?: string;
+  repetitionCount?: number;
 }
 
 export interface DeleteCardInput {
