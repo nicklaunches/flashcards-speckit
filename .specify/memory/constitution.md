@@ -1,50 +1,77 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report:
+- Version change: [new] → 1.0.0
+- Modified principles: [new] → 5 new principles established
+- Added sections: Core Principles (5), Technology Stack, Performance & Accessibility Standards
+- Removed sections: None
+- Templates requiring updates:
+  ✅ plan-template.md - technical context section aligns with tech stack requirements
+  ✅ spec-template.md - user story prioritization aligns with vertical slice principle
+  ✅ tasks-template.md - task organization supports vertical slicing and time constraints
+- Follow-up TODOs: None - all placeholder values defined
+-->
+
+# Flashcards SpecKit Constitution
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Vertical Slicing (NON-NEGOTIABLE)
+Every feature MUST be delivered as vertical slices where 90% of tasks complete in under 30 minutes. Tasks exceeding 30 minutes MUST be broken down further. Each slice MUST deliver end-to-end user value from UI to database. No horizontal layers or technical-only tasks without immediate user benefit.
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+**Rationale**: Ensures rapid feedback loops, reduces integration risk, and maintains development momentum through frequent, demonstrable progress.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+### II. Technology Stack Adherence
+MUST use React + Next.js + TypeScript for all frontend code. MUST use SQLite database with Drizzle ORM for all data persistence. No exceptions without constitutional amendment. External service dependencies are FORBIDDEN - all functionality MUST work locally.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+**Rationale**: Enforces consistency, reduces learning curve, and ensures offline-first capability through local-only technology choices.
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+### III. Test Coverage Requirements
+Unit tests MANDATORY for all core business logic (utilities, data models, business rules). Playwright smoke tests MANDATORY for critical user journeys. No feature ships without covering its core logic and primary user flow. Test-first development ENCOURAGED but not mandated.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+**Rationale**: Ensures reliability while balancing development speed with quality assurance through targeted testing strategy.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### IV. Accessibility & Performance Standards
+All UI components MUST meet WCAG AA accessibility standards. First Load JavaScript bundle MUST remain under 160KB. Performance budget violations require explicit justification and remediation plan before feature approval.
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+**Rationale**: Ensures inclusive access and maintains fast, responsive user experience even on slower devices and connections.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+### V. Offline-First Architecture
+Application MUST function completely without internet connectivity. No external API calls, cloud services, or network dependencies permitted. All features MUST work with local-only data and processing.
+
+**Rationale**: Guarantees application reliability regardless of network conditions and protects user privacy by keeping all data local.
+
+## Technology Stack
+
+**Frontend**: React 18+, Next.js 14+, TypeScript 5+
+**Database**: SQLite 3+ with Drizzle ORM
+**Testing**: Vitest (unit), Playwright (integration/smoke)
+**Styling**: Tailwind CSS (performance budget compliant)
+**Build**: Next.js built-in bundling and optimization
+**Deployment**: Static export capability for local hosting
+
+All dependencies MUST align with offline-first principle. No CDN dependencies, external fonts, or cloud services permitted.
+
+## Performance & Accessibility Standards
+
+**Performance Metrics**:
+- First Load JS: < 160KB (hard limit)
+- First Contentful Paint: < 1.5s on simulated 3G
+- Core Web Vitals: All metrics in "Good" range
+
+**Accessibility Requirements**:
+- WCAG AA compliance for all interactive elements
+- Keyboard navigation support for all features
+- Screen reader compatibility verified
+- Color contrast ratios ≥ 4.5:1 for normal text, ≥ 3:1 for large text
+
+**Validation**: Use Lighthouse CI for automated performance/accessibility checks on every build.
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+This Constitution supersedes all other development practices and must be verified during code review. All features MUST demonstrate compliance with vertical slicing, technology stack, testing, performance, accessibility, and offline-first requirements before merge approval.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+Violations require explicit justification documenting why the principle cannot be followed and what mitigation strategies will be employed. Constitutional amendments require documentation of rationale, impact analysis, and template updates.
+
+Complexity exceeding constitutional bounds must be justified with evidence that simpler alternatives were evaluated and found insufficient for the specific technical requirements.
+
+**Version**: 1.0.0 | **Ratified**: 2025-10-15 | **Last Amended**: 2025-10-15

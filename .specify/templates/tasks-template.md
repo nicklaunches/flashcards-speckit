@@ -11,16 +11,17 @@ description: "Task list template for feature implementation"
 
 **Organization**: Tasks are grouped by user story to enable independent implementation and testing of each story.
 
-## Format: `[ID] [P?] [Story] Description`
+**⚠️ TASK SIZE CONSTRAINT**: Per constitution, 90% of tasks MUST complete in under 30 minutes. If a task description suggests >30min work, break it down into smaller, specific sub-tasks.
+
+## Format: `[ID] [P?] [Story] Description (Est: XXmin)`
 - **[P]**: Can run in parallel (different files, no dependencies)
 - **[Story]**: Which user story this task belongs to (e.g., US1, US2, US3)
+- **Est**: Estimated time in minutes - include for tasks that might approach 30min limit
 - Include exact file paths in descriptions
 
 ## Path Conventions
-- **Single project**: `src/`, `tests/` at repository root
-- **Web app**: `backend/src/`, `frontend/src/`
-- **Mobile**: `api/src/`, `ios/src/` or `android/src/`
-- Paths shown below assume single project - adjust based on plan.md structure
+- **Next.js structure**: `src/app/`, `src/components/`, `src/lib/`, `src/db/`, `tests/unit/`, `tests/e2e/`
+- Paths shown below assume Next.js App Router structure - adjust based on plan.md if different
 
 <!-- 
   ============================================================================

@@ -17,21 +17,26 @@
   the iteration process.
 -->
 
-**Language/Version**: [e.g., Python 3.11, Swift 5.9, Rust 1.75 or NEEDS CLARIFICATION]  
-**Primary Dependencies**: [e.g., FastAPI, UIKit, LLVM or NEEDS CLARIFICATION]  
-**Storage**: [if applicable, e.g., PostgreSQL, CoreData, files or N/A]  
-**Testing**: [e.g., pytest, XCTest, cargo test or NEEDS CLARIFICATION]  
-**Target Platform**: [e.g., Linux server, iOS 15+, WASM or NEEDS CLARIFICATION]
-**Project Type**: [single/web/mobile - determines source structure]  
-**Performance Goals**: [domain-specific, e.g., 1000 req/s, 10k lines/sec, 60 fps or NEEDS CLARIFICATION]  
-**Constraints**: [domain-specific, e.g., <200ms p95, <100MB memory, offline-capable or NEEDS CLARIFICATION]  
-**Scale/Scope**: [domain-specific, e.g., 10k users, 1M LOC, 50 screens or NEEDS CLARIFICATION]
+**Language/Version**: TypeScript 5+ with React 18+ and Next.js 14+
+**Primary Dependencies**: React, Next.js, Drizzle ORM, Tailwind CSS
+**Storage**: SQLite (local database only - offline-first requirement)
+**Testing**: Vitest (unit tests), Playwright (smoke tests for critical journeys)
+**Target Platform**: Web (modern browsers), static export capable
+**Project Type**: Web application (single-page app with Next.js)
+**Performance Goals**: First Load JS <160KB, FCP <1.5s on 3G, Core Web Vitals "Good"
+**Constraints**: WCAG AA compliance, offline-first (no external services), local-only operation
+**Scale/Scope**: [domain-specific, e.g., number of flashcard decks, concurrent study sessions or NEEDS CLARIFICATION]
 
 ## Constitution Check
 
 *GATE: Must pass before Phase 0 research. Re-check after Phase 1 design.*
 
-[Gates determined based on constitution file]
+- [ ] **Vertical Slicing**: All planned tasks can be completed in <30 minutes
+- [ ] **Technology Stack**: Uses React + Next.js + TypeScript + SQLite/Drizzle only
+- [ ] **Test Strategy**: Unit tests planned for core logic, Playwright for user journeys
+- [ ] **Performance Budget**: First Load JS bundle projected to stay <160KB
+- [ ] **Accessibility**: WCAG AA compliance strategy documented
+- [ ] **Offline-First**: No external dependencies or network requirements identified
 
 ## Project Structure
 
@@ -50,49 +55,29 @@ specs/[###-feature]/
 ### Source Code (repository root)
 <!--
   ACTION REQUIRED: Replace the placeholder tree below with the concrete layout
-  for this feature. Delete unused options and expand the chosen structure with
-  real paths (e.g., apps/admin, packages/something). The delivered plan must
-  not include Option labels.
+  for this feature. The delivered plan must not include Option labels.
+  Structure follows Next.js conventions with offline-first architecture.
 -->
 
 ```
-# [REMOVE IF UNUSED] Option 1: Single project (DEFAULT)
+# Next.js Web Application Structure
 src/
-├── models/
-├── services/
-├── cli/
-└── lib/
+├── app/                    # Next.js App Router pages and layouts
+├── components/             # Reusable React components
+├── lib/                   # Core business logic and utilities
+├── db/                    # Database schema and Drizzle configuration
+└── types/                 # TypeScript type definitions
 
 tests/
-├── contract/
-├── integration/
-└── unit/
+├── unit/                  # Vitest unit tests for core logic
+└── e2e/                   # Playwright end-to-end tests
 
-# [REMOVE IF UNUSED] Option 2: Web application (when "frontend" + "backend" detected)
-backend/
-├── src/
-│   ├── models/
-│   ├── services/
-│   └── api/
-└── tests/
-
-frontend/
-├── src/
-│   ├── components/
-│   ├── pages/
-│   └── services/
-└── tests/
-
-# [REMOVE IF UNUSED] Option 3: Mobile + API (when "iOS/Android" detected)
-api/
-└── [same as backend above]
-
-ios/ or android/
-└── [platform-specific structure: feature modules, UI flows, platform tests]
+public/                    # Static assets (offline-compatible)
+├── icons/
+└── fonts/                 # Local fonts only (no CDN dependencies)
 ```
 
-**Structure Decision**: [Document the selected structure and reference the real
-directories captured above]
+**Structure Decision**: Next.js application with App Router, following offline-first principle with all dependencies bundled locally.
 
 ## Complexity Tracking
 
