@@ -1,23 +1,30 @@
-"use server";
+// Client-side study service functions
+// These run in the browser and interact with SQL.js database
 
-import { revalidatePath } from "next/cache";
-import { studySessionRepository } from "@/lib/db/study-repository";
-import { sessionCardRepository } from "@/lib/db/session-card-repository";
-import { cardRepository } from "@/lib/db/card-repository";
+import { StudySessionRepository } from "@/lib/db/study-repository";
+import { SessionCardRepository } from "@/lib/db/session-card-repository";
+import { CardRepository } from "@/lib/db/card-repository";
 import { withErrorHandling } from "@/lib/utils/errors";
-import type { 
+import type {
   StudySession,
   SessionCard,
   Card,
   StartStudySessionInput,
   ReviewCardInput,
-  ApiResponse 
+  ApiResponse
 } from "@/types";
 
+// Repositories are instantiated per-call to ensure fresh database connection
+const getStudySessionRepository = () => new StudySessionRepository();
+const getSessionCardRepository = () => new SessionCardRepository();
+const getCardRepository = () => new CardRepository();
+
 export const startStudySession = withErrorHandling(async (input: StartStudySessionInput): Promise<ApiResponse<StudySession>> => {
+  const studySessionRepository = getStudySessionRepository();
+
   // Check if there's already an active session for this deck
   const activeSession = await studySessionRepository.findActiveByDeckId(input.deckId);
-  
+
   if (activeSession) {
     return {
       success: true,
@@ -27,11 +34,7 @@ export const startStudySession = withErrorHandling(async (input: StartStudySessi
 
   // Create new session
   const session = await studySessionRepository.create(input);
-  
-  // Revalidate relevant paths
-  revalidatePath(`/decks/${input.deckId}`);
-  revalidatePath(`/decks/${input.deckId}/study`);
-  
+
   return {
     success: true,
     data: session,
@@ -39,16 +42,20 @@ export const startStudySession = withErrorHandling(async (input: StartStudySessi
 });
 
 export const reviewCard = withErrorHandling(async (input: ReviewCardInput): Promise<ApiResponse<SessionCard>> => {
+  const sessionCardRepository = getSessionCardRepository();
+  const studySessionRepository = getStudySessionRepository();
+  const cardRepository = getCardRepository();
+
   // Create session card record
   const sessionCard = await sessionCardRepository.create(input);
-  
+
   // Update session progress
   const sessionCards = await sessionCardRepository.findBySessionId(input.sessionId);
   const cardsStudied = sessionCards.length;
-  const cardsCorrect = sessionCards.filter(sc => sc.response === "easy").length;
-  
+  const cardsCorrect = sessionCards.filter((sc: SessionCard) => sc.response === "easy").length;
+
   await studySessionRepository.updateProgress(input.sessionId, cardsStudied, cardsCorrect);
-  
+
   // Update card's spaced repetition data (basic implementation for now)
   const card = await cardRepository.findById(input.cardId);
   if (card) {
@@ -56,7 +63,7 @@ export const reviewCard = withErrorHandling(async (input: ReviewCardInput): Prom
     let newIntervalDays = card.intervalDays;
     let newEasinessFactor = card.easinessFactor;
     let newRepetitionCount = card.repetitionCount + 1;
-    
+
     if (input.response === "easy") {
       // Increase interval and maintain or slightly increase easiness
       newIntervalDays = Math.max(1, Math.round(card.intervalDays * card.easinessFactor));
@@ -66,10 +73,10 @@ export const reviewCard = withErrorHandling(async (input: ReviewCardInput): Prom
       newIntervalDays = 1;
       newEasinessFactor = Math.max(1.3, card.easinessFactor - 0.2);
     }
-    
+
     // Calculate next review date
     const nextReviewDate = new Date(now.getTime() + newIntervalDays * 24 * 60 * 60 * 1000);
-    
+
     await cardRepository.update({
       id: card.id,
       easinessFactor: newEasinessFactor,
@@ -78,10 +85,7 @@ export const reviewCard = withErrorHandling(async (input: ReviewCardInput): Prom
       repetitionCount: newRepetitionCount,
     });
   }
-  
-  // Revalidate relevant paths
-  revalidatePath(`/decks/${sessionCard.sessionId}/study`);
-  
+
   return {
     success: true,
     data: sessionCard,
@@ -89,12 +93,9 @@ export const reviewCard = withErrorHandling(async (input: ReviewCardInput): Prom
 });
 
 export const completeStudySession = withErrorHandling(async (sessionId: number): Promise<ApiResponse<StudySession>> => {
+  const studySessionRepository = getStudySessionRepository();
   const session = await studySessionRepository.complete(sessionId);
-  
-  // Revalidate relevant paths
-  revalidatePath("/");
-  revalidatePath(`/decks`);
-  
+
   return {
     success: true,
     data: session,
@@ -102,25 +103,24 @@ export const completeStudySession = withErrorHandling(async (sessionId: number):
 });
 
 export const abandonStudySession = withErrorHandling(async (sessionId: number): Promise<ApiResponse<void>> => {
+  const studySessionRepository = getStudySessionRepository();
   await studySessionRepository.abandon(sessionId);
-  
-  // Revalidate relevant paths
-  revalidatePath("/");
-  revalidatePath(`/decks`);
-  
+
   return {
     success: true,
   };
 });
 
 export const getStudyQueue = withErrorHandling(async (deckId: number): Promise<ApiResponse<Card[]>> => {
+  const cardRepository = getCardRepository();
+
   // For now, get all cards in the deck
   // Later this will be filtered by due date and prioritized by spaced repetition
   const cards = await cardRepository.findByDeckId(deckId);
-  
+
   // Simple shuffle for now - later we'll implement proper spaced repetition ordering
   const shuffledCards = [...cards].sort(() => Math.random() - 0.5);
-  
+
   return {
     success: true,
     data: shuffledCards,
@@ -128,8 +128,9 @@ export const getStudyQueue = withErrorHandling(async (deckId: number): Promise<A
 });
 
 export const getActiveStudySession = withErrorHandling(async (deckId: number): Promise<ApiResponse<StudySession | null>> => {
+  const studySessionRepository = getStudySessionRepository();
   const session = await studySessionRepository.findActiveByDeckId(deckId);
-  
+
   return {
     success: true,
     data: session,
@@ -144,6 +145,9 @@ export const getStudySessionProgress = withErrorHandling(async (sessionId: numbe
     averageResponseTime?: number;
   };
 }>> => {
+  const studySessionRepository = getStudySessionRepository();
+  const sessionCardRepository = getSessionCardRepository();
+
   const session = await studySessionRepository.findById(sessionId);
   if (!session) {
     return {
@@ -151,9 +155,9 @@ export const getStudySessionProgress = withErrorHandling(async (sessionId: numbe
       error: "Study session not found",
     };
   }
-  
+
   const progress = await sessionCardRepository.getSessionProgress(sessionId);
-  
+
   return {
     success: true,
     data: {

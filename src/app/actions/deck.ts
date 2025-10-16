@@ -1,4 +1,5 @@
-"use server";
+// Client-side deck service functions
+// These run in the browser and interact with SQL.js database
 
 import { DeckRepository } from "@/lib/db/deck-repository";
 import { withErrorHandling } from "@/lib/utils/errors";
@@ -13,11 +14,13 @@ import type {
   DeckWithCards,
 } from "@/types";
 
-const deckRepository = new DeckRepository();
+// Repository is instantiated per-call to ensure fresh database connection
+const getDeckRepository = () => new DeckRepository();
 
 export const createDeck = withErrorHandling(async (input: CreateDeckInput): Promise<ApiResponse<DeckWithStats>> => {
+  const deckRepository = getDeckRepository();
   const deck = await deckRepository.create(input);
-  
+
   // Convert to DeckWithStats format
   const deckWithStats: DeckWithStats = {
     ...deck,
@@ -35,11 +38,12 @@ export const createDeck = withErrorHandling(async (input: CreateDeckInput): Prom
 });
 
 export const updateDeck = withErrorHandling(async (input: UpdateDeckInput): Promise<ApiResponse<DeckWithStats>> => {
+  const deckRepository = getDeckRepository();
   const deck = await deckRepository.update(input);
-  
+
   // Get stats for the updated deck
   const deckWithStats = await deckRepository.findWithStats(deck.id);
-  
+
   if (!deckWithStats) {
     throw new Error("Failed to retrieve updated deck");
   }
@@ -52,7 +56,8 @@ export const updateDeck = withErrorHandling(async (input: UpdateDeckInput): Prom
 
 export const deleteDeck = withErrorHandling(async (input: DeleteDeckInput): Promise<ApiResponse<{ deletedDeckId: number; deletedCardCount: number }>> => {
   validateConfirmation(input.confirmDelete);
-  
+
+  const deckRepository = getDeckRepository();
   const result = await deckRepository.delete(input.id);
 
   return {
@@ -62,8 +67,9 @@ export const deleteDeck = withErrorHandling(async (input: DeleteDeckInput): Prom
 });
 
 export const getDeck = withErrorHandling(async (input: GetDeckInput): Promise<ApiResponse<DeckWithCards>> => {
+  const deckRepository = getDeckRepository();
   const deckWithStats = await deckRepository.findWithStats(input.id);
-  
+
   if (!deckWithStats) {
     return {
       success: false,
@@ -84,6 +90,7 @@ export const getDeck = withErrorHandling(async (input: GetDeckInput): Promise<Ap
 });
 
 export const listDecks = withErrorHandling(async (): Promise<ApiResponse<DeckWithStats[]>> => {
+  const deckRepository = getDeckRepository();
   const decks = await deckRepository.findAll();
 
   return {
@@ -93,6 +100,7 @@ export const listDecks = withErrorHandling(async (): Promise<ApiResponse<DeckWit
 });
 
 export const searchDecks = withErrorHandling(async (query: string): Promise<ApiResponse<DeckWithStats[]>> => {
+  const deckRepository = getDeckRepository();
   const decks = await deckRepository.search(query);
 
   return {

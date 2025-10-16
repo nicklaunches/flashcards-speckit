@@ -1,7 +1,7 @@
-"use server";
+// Client-side card service functions
+// These run in the browser and interact with SQL.js database
 
-import { revalidatePath } from "next/cache";
-import { cardRepository } from "@/lib/db/card-repository";
+import { CardRepository } from "@/lib/db/card-repository";
 import { withErrorHandling } from "@/lib/utils/errors";
 import type { 
   Card, 
@@ -11,12 +11,12 @@ import type {
   ApiResponse 
 } from "@/types";
 
+// Repository is instantiated per-call to ensure fresh database connection
+const getCardRepository = () => new CardRepository();
+
 export const createCard = withErrorHandling(async (input: CreateCardInput): Promise<ApiResponse<Card>> => {
+  const cardRepository = getCardRepository();
   const card = await cardRepository.create(input);
-  
-  // Revalidate relevant paths
-  revalidatePath("/");
-  revalidatePath(`/decks/${input.deckId}`);
   
   return {
     success: true,
@@ -25,11 +25,8 @@ export const createCard = withErrorHandling(async (input: CreateCardInput): Prom
 });
 
 export const updateCard = withErrorHandling(async (input: UpdateCardInput): Promise<ApiResponse<Card>> => {
+  const cardRepository = getCardRepository();
   const card = await cardRepository.update(input);
-  
-  // Revalidate relevant paths
-  revalidatePath("/");
-  revalidatePath(`/decks`);
   
   return {
     success: true,
@@ -45,7 +42,9 @@ export const deleteCard = withErrorHandling(async (input: DeleteCardInput): Prom
     };
   }
 
-  // Get the card to find the deck ID for revalidation
+  const cardRepository = getCardRepository();
+  
+  // Get the card to verify it exists
   const card = await cardRepository.findById(input.id);
   if (!card) {
     return {
@@ -56,16 +55,13 @@ export const deleteCard = withErrorHandling(async (input: DeleteCardInput): Prom
 
   await cardRepository.delete(input.id);
   
-  // Revalidate relevant paths
-  revalidatePath("/");
-  revalidatePath(`/decks/${card.deckId}`);
-  
   return {
     success: true,
   };
 });
 
 export const getCard = withErrorHandling(async (id: number): Promise<ApiResponse<Card>> => {
+  const cardRepository = getCardRepository();
   const card = await cardRepository.findById(id);
   
   if (!card) {
@@ -82,6 +78,7 @@ export const getCard = withErrorHandling(async (id: number): Promise<ApiResponse
 });
 
 export const listCardsByDeck = withErrorHandling(async (deckId: number): Promise<ApiResponse<Card[]>> => {
+  const cardRepository = getCardRepository();
   const cards = await cardRepository.findByDeckId(deckId);
   
   return {
@@ -94,11 +91,8 @@ export const bulkCreateCards = withErrorHandling(async (
   deckId: number, 
   cardInputs: Array<{ front: string; back: string }>
 ): Promise<ApiResponse<Card[]>> => {
+  const cardRepository = getCardRepository();
   const cards = await cardRepository.bulkCreate(deckId, cardInputs);
-  
-  // Revalidate relevant paths
-  revalidatePath("/");
-  revalidatePath(`/decks/${deckId}`);
   
   return {
     success: true,
@@ -107,6 +101,7 @@ export const bulkCreateCards = withErrorHandling(async (
 });
 
 export const getDueCards = withErrorHandling(async (deckId: number): Promise<ApiResponse<Card[]>> => {
+  const cardRepository = getCardRepository();
   const cards = await cardRepository.getDueCardsByDeckId(deckId);
   
   return {
@@ -116,6 +111,7 @@ export const getDueCards = withErrorHandling(async (deckId: number): Promise<Api
 });
 
 export const getCardCount = withErrorHandling(async (deckId: number): Promise<ApiResponse<number>> => {
+  const cardRepository = getCardRepository();
   const count = await cardRepository.getCountByDeckId(deckId);
   
   return {

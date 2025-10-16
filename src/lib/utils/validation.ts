@@ -9,13 +9,13 @@ export function validateRequired(value: unknown, fieldName: string): void {
 
 export function validateString(value: unknown, fieldName: string, minLength = 0, maxLength = Infinity): string {
   validateRequired(value, fieldName);
-  
+
   if (typeof value !== "string") {
     throw new ValidationError(`${fieldName} must be a string`, fieldName);
   }
 
   const trimmed = value.trim();
-  
+
   if (trimmed.length < minLength) {
     throw new ValidationError(
       `${fieldName} must be at least ${minLength} characters long`,
@@ -35,9 +35,9 @@ export function validateString(value: unknown, fieldName: string, minLength = 0,
 
 export function validateNumber(value: unknown, fieldName: string, min = -Infinity, max = Infinity): number {
   validateRequired(value, fieldName);
-  
+
   const num = typeof value === "string" ? parseFloat(value) : value;
-  
+
   if (typeof num !== "number" || isNaN(num)) {
     throw new ValidationError(`${fieldName} must be a valid number`, fieldName);
   }
@@ -55,7 +55,7 @@ export function validateNumber(value: unknown, fieldName: string, min = -Infinit
 
 export function validateInteger(value: unknown, fieldName: string, min = -Infinity, max = Infinity): number {
   const num = validateNumber(value, fieldName, min, max);
-  
+
   if (!Number.isInteger(num)) {
     throw new ValidationError(`${fieldName} must be an integer`, fieldName);
   }
@@ -71,12 +71,12 @@ export function validateBoolean(value: unknown, fieldName: string): boolean {
 }
 
 export function validateEnum<T extends string>(
-  value: unknown, 
-  fieldName: string, 
+  value: unknown,
+  fieldName: string,
   allowedValues: readonly T[]
 ): T {
   validateRequired(value, fieldName);
-  
+
   if (typeof value !== "string") {
     throw new ValidationError(`${fieldName} must be a string`, fieldName);
   }
@@ -97,10 +97,25 @@ export function validateDeckName(name: unknown): string {
 }
 
 export function validateDeckDescription(description: unknown): string {
-  if (description === null || description === undefined) {
+  // Description is optional - return empty string if not provided
+  if (description === null || description === undefined || description === "") {
     return "";
   }
-  return validateString(description, "description", 0, 500);
+
+  if (typeof description !== "string") {
+    throw new ValidationError("description must be a string", "description");
+  }
+
+  const trimmed = description.trim();
+
+  if (trimmed.length > 500) {
+    throw new ValidationError(
+      "description must be no more than 500 characters long",
+      "description"
+    );
+  }
+
+  return trimmed;
 }
 
 // Card validation
