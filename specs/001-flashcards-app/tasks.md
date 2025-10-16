@@ -23,13 +23,13 @@
 
 **Purpose**: Project initialization and basic structure
 
-- [ ] T001 Create Next.js project with TypeScript, Tailwind CSS, and ESLint using create-next-app
-- [ ] T002 [P] Install core dependencies: drizzle-orm, sqlite3, sql.js, clsx, tailwind-merge, lucide-react
-- [ ] T003 [P] Install development dependencies: drizzle-kit, vitest, @testing-library/react, playwright
-- [ ] T004 [P] Create project directory structure in src/ for app/, components/, lib/, db/, types/
-- [ ] T005 [P] Configure Tailwind CSS with custom colors and dark mode in tailwind.config.js
-- [ ] T006 [P] Configure TypeScript paths and Next.js settings in next.config.js
-- [ ] T007 [P] Setup package.json scripts for development, build, test, and database operations
+- [x] T001 Create Next.js project with TypeScript, Tailwind CSS, and ESLint using create-next-app
+- [x] T002 [P] Install core dependencies: drizzle-orm, sqlite3, sql.js, clsx, tailwind-merge, lucide-react
+- [x] T003 [P] Install development dependencies: drizzle-kit, vitest, @testing-library/react, playwright
+- [x] T004 [P] Create project directory structure in src/ for app/, components/, lib/, db/, types/
+- [x] T005 [P] Configure Tailwind CSS with custom colors and dark mode in tailwind.config.js
+- [x] T006 [P] Configure TypeScript paths and Next.js settings in next.config.js
+- [x] T007 [P] Setup package.json scripts for development, build, test, and database operations
 
 ---
 
@@ -39,15 +39,15 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T008 Create database schema for all entities in src/db/schema.ts
-- [ ] T009 Configure Drizzle ORM and migrations in drizzle.config.ts
-- [ ] T010 Implement SQLite connection with SQL.js in src/lib/db/connection.ts
-- [ ] T011 [P] Create TypeScript type definitions in src/types/index.ts
-- [ ] T012 [P] Setup CSS variables for theming in src/app/globals.css
-- [ ] T013 [P] Create base UI components (Button, Input, Card) in src/components/ui/
-- [ ] T014 Create root layout with theme provider in src/app/layout.tsx
-- [ ] T015 [P] Implement error handling utilities in src/lib/utils/errors.ts
-- [ ] T016 [P] Create validation utilities in src/lib/utils/validation.ts
+- [x] T008 Create database schema for all entities in src/db/schema.ts
+- [x] T009 Configure Drizzle ORM and migrations in drizzle.config.ts
+- [x] T010 Implement SQLite connection with SQL.js in src/lib/db/connection.ts
+- [x] T011 [P] Create TypeScript type definitions in src/types/index.ts
+- [x] T012 [P] Setup CSS variables for theming in src/app/globals.css
+- [x] T013 [P] Create base UI components (Button, Input, Card) in src/components/ui/
+- [x] T014 Create root layout with theme provider in src/app/layout.tsx
+- [x] T015 [P] Implement error handling utilities in src/lib/utils/errors.ts
+- [x] T016 [P] Create validation utilities in src/lib/utils/validation.ts
 
 **Checkpoint**: Foundation ready - user story implementation can now begin in parallel
 
@@ -61,16 +61,16 @@
 
 ### Implementation for User Story 1
 
-- [ ] T017 [P] [US1] Create Deck repository class with CRUD operations in src/lib/db/deck-repository.ts
-- [ ] T018 [P] [US1] Implement createDeck Server Action in src/app/actions/deck.ts
-- [ ] T019 [P] [US1] Implement updateDeck Server Action in src/app/actions/deck.ts
-- [ ] T020 [P] [US1] Implement deleteDeck Server Action in src/app/actions/deck.ts
-- [ ] T021 [P] [US1] Implement getDeck Server Action in src/app/actions/deck.ts
-- [ ] T022 [P] [US1] Implement listDecks Server Action in src/app/actions/deck.ts
-- [ ] T023 [P] [US1] Create DeckCard component for deck display in src/components/deck/deck-card.tsx
-- [ ] T024 [P] [US1] Create DeckForm component for deck creation/editing in src/components/deck/deck-form.tsx
-- [ ] T025 [P] [US1] Create DeckList component for displaying all decks in src/components/deck/deck-list.tsx
-- [ ] T026 [US1] Implement home page with deck list in src/app/page.tsx
+- [x] T017 [P] [US1] Create Deck repository class with CRUD operations in src/lib/db/deck-repository.ts
+- [x] T018 [P] [US1] Implement createDeck Server Action in src/app/actions/deck.ts
+- [x] T019 [P] [US1] Implement updateDeck Server Action in src/app/actions/deck.ts
+- [x] T020 [P] [US1] Implement deleteDeck Server Action in src/app/actions/deck.ts
+- [x] T021 [P] [US1] Implement getDeck Server Action in src/app/actions/deck.ts
+- [x] T022 [P] [US1] Implement listDecks Server Action in src/app/actions/deck.ts
+- [x] T023 [P] [US1] Create DeckCard component for deck display in src/components/deck/deck-card.tsx
+- [x] T024 [P] [US1] Create DeckForm component for deck creation/editing in src/components/deck/deck-form.tsx
+- [x] T025 [P] [US1] Create DeckList component for displaying all decks in src/components/deck/deck-list.tsx
+- [x] T026 [US1] Implement home page with deck list in src/app/page.tsx
 - [ ] T027 [US1] Create new deck page in src/app/decks/new/page.tsx
 - [ ] T028 [US1] Implement deck detail page structure in src/app/decks/[id]/page.tsx
 - [ ] T029 [US1] Add deck deletion with confirmation in deck detail page
